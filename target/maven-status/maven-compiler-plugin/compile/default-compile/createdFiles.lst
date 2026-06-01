@@ -1,0 +1,6 @@
+com\example\diet_analysis\DietAnalysisApplication.class
+com\example\diet_analysis\model\EstimatedFood.class
+com\example\diet_analysis\controller\AnalysisController.class
+com\example\diet_analysis\model\AnalysisResult.class
+com\example\diet_analysis\model\DietAnalysisResponse.class
+com\example\diet_analysis\controller\HomeController.class
