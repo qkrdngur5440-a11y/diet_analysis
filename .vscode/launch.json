@@ -5,11 +5,29 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "chrome",
+            "type": "java",
+            "name": "Launch DietAnalysisApplication",
             "request": "launch",
-            "name": "Launch Chrome against localhost",
-            "url": "http://localhost:8080",
+            "mainClass": "com.example.diet_analysis.DietAnalysisApplication",
+            "projectName": "diet-analysis-service",
+            "preLaunchTask": "Open localhost:8082 in Chrome",
+            "args": ["--server.port=8082"]
+        },
+        {
+            "type": "pwa-chrome",
+            "request": "launch",
+            "name": "Open localhost:8082",
+            "url": "http://localhost:8082",
             "webRoot": "${workspaceFolder}"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Launch Spring Boot + Browser",
+            "configurations": [
+                "Launch DietAnalysisApplication",
+                "Open localhost:8082"
+            ]
         }
     ]
 }
