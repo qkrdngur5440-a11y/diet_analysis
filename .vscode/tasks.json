@@ -11,7 +11,7 @@
         "Start-Process chrome -ArgumentList 'http://localhost:8082'"
       ],
       "presentation": {
-        "reveal": "never",
+        "reveal": "never",    
         "focus": false,
         "panel": "dedicated"
       },
