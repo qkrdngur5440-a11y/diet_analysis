@@ -10,9 +10,9 @@ import com.example.diet_analysis.model.DailyStats;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.Collectors; 
  
-@RestController
+@RestController   
 @RequestMapping("/api/exercise")
 public class ExerciseController {
     // NOTE: In production, replace this with a database (JPA/Hibernate)
