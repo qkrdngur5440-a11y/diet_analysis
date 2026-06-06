@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diet & Exercise Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f5f5f7;
+      --surface: #ffffff;
+      --border: #e5e5e7;
+      --text: #1d1d1f;
+      --muted: #86868b;
+      --point: #10b981;
+      --point-2: #059669;
+      --danger: #ef4444;
+      --radius: 24px;
+      --shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
+    }
+    .page { max-width: 1000px; margin: 0 auto; padding: 40px 24px; }
+    h1 {
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    h2 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      box-shadow: var(--shadow);
+      margin-bottom: 28px;
+    }
+    .section-note {
+      color: var(--muted);
+      margin-top: 0;
+      margin-bottom: 24px;
+      font-size: 15px;
+      word-break: keep-all;
+    }
+    .exercise-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .exercise-row label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      max-width: 420px;
+      background: #fafafa;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px 18px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: border-color 0.15s ease;
+    }
+    .exercise-row label:hover {
+      border-color: #86868b;
+    }
+    .exercise-row input[type="number"] {
+      width: 88px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+    .exercise-row input[type="number"]:focus {
+      border-color: var(--text);
+    }
+    .button-primary {
+      background: var(--text);
+      color: #fff;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .button-primary:hover {
+      background: #3a3a3c;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    .button-primary:active {
+      transform: scale(0.98);
+    }
+    .summary-list {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .summary-item {
+      padding: 16px 20px;
+      border-radius: 18px;
+      background: #fafafa;
+      border: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 15px;
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 24px;
+    }
+    @media (max-width: 760px) {
+      .calendar-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 480px) {
+      .calendar-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    .calendar-card {
+      border-radius: 20px;
+      background: #fafafa;
+      border: 1px solid var(--border);
+      padding: 20px;
+      min-height: 170px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .calendar-card h3 {
+      margin: 0 0 12px;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .calendar-bar {
+      height: 10px;
+      border-radius: 999px;
+      margin: 8px 0;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 16px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .green {
+      background: var(--point);
+    }
+    .red {
+      background: var(--danger);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .badge-total {
+      background: rgba(16, 185, 129, 0.08);
+      color: var(--point-2);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    .hint {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>오늘의 운동과 칼로리 관리</h1>
+    <p class="section-note">체크박스를 통해 오늘 수행한 운동을 선택하고, 운동 시간을 입력해보세요. 오늘 운동과 소모 칼로리가 아래에 나타납니다.</p>
+
+    <div class="card">
+      <h2>운동 선택</h2>
+      <p class="section-note">운동을 선택한 뒤 저장하면 오늘 운동 기록과 소모 칼로리가 업데이트됩니다.</p>
+      <div id="exerciseOptions"></div>
+      <button id="saveExercises" class="button-primary">운동 기록 저장</button>
+    </div>
+
+    <div class="card">
+      <h2>오늘 한 운동</h2>
+      <div id="todayExerciseSummary"><p class="hint">운동을 저장하면 여기에 오늘 운동 목록과 소모 칼로리가 표시됩니다.</p></div>
+    </div>
+
+    <div class="card">
+      <h2>섭취 · 소모 칼로리 달력 (최근 일주일)</h2>
+      <p class="section-note">오늘과 최근 6일 동안 기록한 섭취 칼로리 및 운동 소모 칼로리를 확인할 수 있습니다.</p>
+      <div class="legend">
+        <span class="legend-item"><span class="dot green"></span>섭취 칼로리</span>
+        <span class="legend-item"><span class="dot red"></span>소모 칼로리</span>
+      </div>
+      <div id="calendarGrid" class="calendar-grid"></div>
+    </div>
+  </div>
+
+  <script>
+    const exerciseChoices = [
+      { name: '걷기', rate: 6, defaultDuration: 30 },
+      { name: '달리기', rate: 10, defaultDuration: 20 },
+      { name: '자전거', rate: 8, defaultDuration: 30 },
+      { name: '줄넘기', rate: 12, defaultDuration: 15 },
+      { name: '요가', rate: 4, defaultDuration: 40 }
+    ];
+
+    const today = new Date().toISOString().slice(0, 10);
+
+    function renderExerciseOptions() {
+      const container = document.getElementById('exerciseOptions');
+      container.innerHTML = '';
+
+      exerciseChoices.forEach((item, index) => {
+        const row = document.createElement('div');
+        row.className = 'exercise-row';
+        row.innerHTML = `
+          <label>
+            <input type="checkbox" data-index="${index}" />
+            <span><strong>${item.name}</strong> (${item.rate} kcal/분)</span>
+          </label>
+          <label>운동 시간 (분): <input type="number" min="1" value="${item.defaultDuration}" data-duration-index="${index}" /></label>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function getSelectedExercises() {
+      const selected = [];
+      exerciseChoices.forEach((item, index) => {
+        const checkbox = document.querySelector(`input[type=checkbox][data-index="${index}"]`);
+        const durationInput = document.querySelector(`input[type=number][data-duration-index="${index}"]`);
+        if (checkbox && checkbox.checked) {
+          const duration = Number(durationInput.value) || item.defaultDuration;
+          selected.push({
+            exerciseName: item.name,
+            duration,
+            caloriesBurned: duration * item.rate,
+            date: today,
+            intensity: '중간'
+          });
+        }
+      });
+      return selected;
+    }
+
+    async function saveSelectedExercises() {
+      const items = getSelectedExercises();
+      if (!items.length) {
+        alert('하나 이상의 운동을 선택하세요.');
+        return;
+      }
+
+      await Promise.all(items.map(item =>
+        fetch('/api/exercise', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(item)
+        })
+      ));
+
+      await loadTodayExercises();
+      await loadCalendar();
+      alert('오늘 운동이 저장되었습니다.');
+    }
+
+    function renderTodaySummary(exercises) {
+      const container = document.getElementById('todayExerciseSummary');
+      if (!exercises.length) {
+        container.innerHTML = '<p class="hint">오늘 저장된 운동이 없습니다.</p>';
+        return;
+      }
+
+      const totalBurned = exercises.reduce((sum, item) => sum + item.caloriesBurned, 0);
+      const list = exercises.map(item => `
+        <div class="summary-item"><strong>${item.exerciseName}</strong> — ${item.duration}분, ${item.caloriesBurned} kcal</div>
+      `).join('');
+
+      container.innerHTML = `
+        <div class="badge badge-total">총 소모 칼로리: ${totalBurned.toLocaleString()} kcal</div>
+        <div class="summary-list">${list}</div>
+      `;
+    }
+
+    async function loadTodayExercises() {
+      const response = await fetch(`/api/exercise/date/${today}`);
+      if (response.ok) {
+        const exercises = await response.json();
+        renderTodaySummary(exercises);
+      }
+    }
+
+    function formatDateLabel(date) {
+      return date.toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric', weekday: 'short' });
+    }
+
+    async function loadCalendar() {
+      const grid = document.getElementById('calendarGrid');
+      grid.innerHTML = '';
+
+      const dateKeys = [];
+      const dates = [];
+      for (let offset = 6; offset >= 0; offset--) {
+        const d = new Date();
+        d.setDate(d.getDate() - offset);
+        dates.push(d);
+        
+        // YYYY-MM-DD
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const dayNum = String(d.getDate()).padStart(2, '0');
+        dateKeys.push(`${y}-${m}-${dayNum}`);
+      }
+
+      const statsList = await Promise.all(dateKeys.map(async (isoDate) => {
+        try {
+          const resp = await fetch(`/daily-stats/${isoDate}`);
+          return resp.ok ? await resp.json() : { consumedCalories: 0, burnedCalories: 0 };
+        } catch(e) {
+          return { consumedCalories: 0, burnedCalories: 0 };
+        }
+      }));
+
+      for (let offset = 6; offset >= 0; offset--) {
+        const idx = 6 - offset;
+        const date = dates[idx];
+        const stats = statsList[idx];
+
+        const card = document.createElement('div');
+        card.className = 'calendar-card';
+        card.style.minHeight = '140px';
+        card.style.padding = '18px';
+        card.style.borderRadius = '20px';
+        card.style.background = '#fafafa';
+        card.style.border = '1px solid var(--border)';
+        card.style.display = 'flex';
+        card.style.flexDirection = 'column';
+        card.style.justifyContent = 'space-between';
+
+        const isToday = (offset === 0);
+        const todayStyle = isToday ? 'color: var(--point-2); font-weight:800;' : 'color: var(--text);';
+
+        const consumedLine = stats.consumedCalories > 0 ? `<div style="font-size:0.85rem;color:var(--point-2);font-weight:700;">+${stats.consumedCalories} kcal</div>` : '<div style="font-size:0.85rem;color:var(--muted);font-weight:500;">입력 없음</div>';
+        const burnedLine = stats.burnedCalories > 0 ? `<div style="font-size:0.85rem;color:var(--danger);font-weight:700;">-${stats.burnedCalories} kcal</div>` : '<div style="font-size:0.85rem;color:var(--muted);font-weight:500;">입력 없음</div>';
+
+        card.innerHTML = `
+          <h3 style="margin: 0 0 10px; font-size: 13px; font-weight: 800; ${todayStyle}">${formatDateLabel(date)}</h3>
+          <div>
+            <div style="font-size: 11px; color: var(--muted); font-weight: 700; margin-bottom: 2px;">섭취</div>
+            ${consumedLine}
+          </div>
+          <div style="margin-top: 10px;">
+            <div style="font-size: 11px; color: var(--muted); font-weight: 700; margin-bottom: 2px;">소모</div>
+            ${burnedLine}
+          </div>
+        `;
+
+        grid.appendChild(card);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderExerciseOptions();
+      loadTodayExercises();
+      loadCalendar();
+      document.getElementById('saveExercises').addEventListener('click', saveSelectedExercises);
+    });
+  </script>
+</body>
+</html>

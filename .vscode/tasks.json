@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Open localhost:8082 in Chrome",
+      "type": "shell",
+      "command": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-Command",
+        "Start-Process chrome -ArgumentList 'http://localhost:8082'"
+      ],
+      "presentation": {
+        "reveal": "never",    
+        "focus": false,  
+        "panel": "dedicated" 
+      },
+      "problemMatcher": []
+    }
+  ]
+}
